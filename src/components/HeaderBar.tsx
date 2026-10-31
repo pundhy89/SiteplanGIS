@@ -8,6 +8,7 @@ import {
   ChevronUp,
   FileDown,
   LogOut,
+  Sparkles,
 } from 'lucide-react';
 import { UnitData } from '../types';
 
@@ -26,6 +27,7 @@ interface HeaderBarProps {
   pointScale?: number;
   onChangePointScale?: (newScale: number) => void;
   onOpenReportModal: () => void;
+  onAutoPlaceUnits?: () => void;
   onLogout?: () => void;
 }
 
@@ -42,6 +44,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   pointScale = 1.0,
   onChangePointScale,
   onOpenReportModal,
+  onAutoPlaceUnits,
   onLogout,
 }) => {
   // Compute counts
@@ -112,6 +115,20 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               <span className="text-[10px] font-mono text-emerald-400">Vol ± Zoom</span>
             </div>
 
+            {/* Otomatis Tempatkan Nomor Rumah */}
+            {onAutoPlaceUnits && (
+              <button
+                onClick={() => {
+                  setIsEditMenuOpen(false);
+                  onAutoPlaceUnits();
+                }}
+                className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-left text-xs font-semibold flex items-center gap-2.5 transition cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Otomatis Pas Nomor Rumah</span>
+              </button>
+            )}
+
             {/* Pas Titik / Mode Edit */}
             <button
               onClick={() => {
@@ -125,7 +142,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               }`}
             >
               <Crosshair className="w-4 h-4 text-yellow-400 shrink-0" />
-              <span>{isEditMode ? 'Selesai Pas Titik' : 'Pas Titik Kavling'}</span>
+              <span>{isEditMode ? 'Selesai Pas Titik' : 'Pas Titik Manual'}</span>
             </button>
 
             {/* Tambah Unit */}

@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { UnitData, SiteplanConfig } from './types';
-import { getInitialUnitsList, createInitialUnitData, sortUnitsAlphanumeric } from './data/initialUnits';
+import {
+  BASELINE_UNITS,
+  getInitialUnitsList,
+  createInitialUnitData,
+  sortUnitsAlphanumeric,
+} from './data/initialUnits';
 import {
   subscribeToUnits,
   saveUnitToFirestore,
@@ -244,6 +249,45 @@ export default function App() {
     []
   );
 
+  // Automatically place all unit badges onto their calibrated positions on the video
+  const handleAutoPlaceUnits = useCallback(async () => {
+    setIsSyncing(true);
+    try {
+      const existingMap = new Map<string, UnitData>(units.map((u) => [u.id, u]));
+      const calibrated: UnitData[] = [];
+
+      BASELINE_UNITS.forEach((base, idx) => {
+        const existing = existingMap.get(base.id);
+        if (existing) {
+          calibrated.push({
+            ...existing,
+            display: base.display,
+            block: base.block,
+            x: base.x,
+            y: base.y,
+            updatedAt: new Date().toISOString(),
+          });
+          existingMap.delete(base.id);
+        } else {
+          calibrated.push(createInitialUnitData(base, idx));
+        }
+      });
+
+      // Keep any extra custom units added by user
+      existingMap.forEach((extra) => calibrated.push(extra));
+
+      const sorted = sortUnitsAlphanumeric(calibrated);
+      setUnits(sorted);
+      await batchUpdateUnits(sorted);
+      showNotification('Seluruh 69 nomor rumah berhasil ditempatkan otomatis di atas video');
+    } catch (err) {
+      console.error('Gagal kalibrasi otomatis:', err);
+      showNotification('Gagal menempatkan ulang titik ke cloud');
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [units, showNotification]);
+
   // Background trigger
   const handleTriggerUploadBackground = () => {
     const input = document.getElementById('bg-file-input') as HTMLInputElement | null;
@@ -347,6 +391,7 @@ export default function App() {
         pointScale={pointScale}
         onChangePointScale={handleChangePointScale}
         onOpenReportModal={() => setIsReportModalOpen(true)}
+        onAutoPlaceUnits={handleAutoPlaceUnits}
         onLogout={() => {
           sessionStorage.removeItem('gis_auth_session');
           setIsAuthenticated(false);

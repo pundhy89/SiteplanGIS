@@ -115,11 +115,11 @@ export function subscribeToUnits(
       if (!hasMigratedBaseline) {
         hasMigratedBaseline = true;
 
-        const a01 = existingMap.get('A01');
-        const d01 = existingMap.get('D01');
+        const a13 = existingMap.get('A13');
+        const d10 = existingMap.get('D10');
         const needsCoordCalibration =
-          (a01 && Math.abs(a01.y - 17.6) > 1.5) ||
-          (d01 && Math.abs(d01.y - 56.3) > 1.5);
+          (a13 && Math.abs(a13.x - 93.1) > 0.1) ||
+          (d10 && Math.abs(d10.x - 73.8) > 0.1);
 
         if (hasObsolete || needsCoordCalibration) {
           try {

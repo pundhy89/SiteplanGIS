@@ -20,7 +20,12 @@ import {
   Eye,
 } from 'lucide-react';
 import { UnitData, UnitStatus, SiteplanConfig } from '../types';
-import { DEFAULT_SITEPLAN_IMAGE, DEFAULT_SITEPLAN_VIDEO, DEFAULT_SITEPLAN_TYPE } from '../data/defaultSiteplan';
+import {
+  DEFAULT_SITEPLAN_IMAGE,
+  DEFAULT_SITEPLAN_VIDEO,
+  LEGACY_SITEPLAN_VIDEO,
+  DEFAULT_SITEPLAN_TYPE,
+} from '../data/defaultSiteplan';
 
 interface SiteplanCanvasProps {
   units: UnitData[];
@@ -129,12 +134,19 @@ export const SiteplanCanvas: React.FC<SiteplanCanvasProps> = ({
   }, [units, calibratingUnit]);
 
   // Background media (default is the uploaded siteplan video)
-  const isLegacyDefaultImg = siteplanConfig?.bgUrl === DEFAULT_SITEPLAN_IMAGE;
-  const bgType = (!siteplanConfig?.bgUrl || isLegacyDefaultImg) ? DEFAULT_SITEPLAN_TYPE : (siteplanConfig.bgType || DEFAULT_SITEPLAN_TYPE);
-  const bgUrl = (!siteplanConfig?.bgUrl || isLegacyDefaultImg) ? DEFAULT_SITEPLAN_VIDEO : siteplanConfig.bgUrl;
+  const isLegacyDefault =
+    siteplanConfig?.bgUrl === DEFAULT_SITEPLAN_IMAGE ||
+    siteplanConfig?.bgUrl === LEGACY_SITEPLAN_VIDEO;
+  const bgType =
+    !siteplanConfig?.bgUrl || isLegacyDefault
+      ? DEFAULT_SITEPLAN_TYPE
+      : siteplanConfig.bgType || DEFAULT_SITEPLAN_TYPE;
+  const bgUrl =
+    !siteplanConfig?.bgUrl || isLegacyDefault ? DEFAULT_SITEPLAN_VIDEO : siteplanConfig.bgUrl;
   const isCustomBg = Boolean(
     siteplanConfig?.bgUrl &&
       siteplanConfig.bgUrl !== DEFAULT_SITEPLAN_VIDEO &&
+      siteplanConfig.bgUrl !== LEGACY_SITEPLAN_VIDEO &&
       siteplanConfig.bgUrl !== DEFAULT_SITEPLAN_IMAGE
   );
   const [isDragOverBg, setIsDragOverBg] = useState(false);
@@ -144,8 +156,8 @@ export const SiteplanCanvas: React.FC<SiteplanCanvasProps> = ({
     const container = containerRef.current;
     if (!container) return;
 
-    let naturalW = 1080;
-    let naturalH = 1912;
+    let naturalW = 720;
+    let naturalH = 1280;
 
     if (bgType === 'video' && videoRef.current && videoRef.current.videoWidth) {
       naturalW = videoRef.current.videoWidth;
