@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "Unit": {
+      "title": "Unit",
+      "description": "Data kavling unit rumah pada siteplan Griya Indah Secawan",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier unik unit, contoh A01"
+        },
+        "display": {
+          "type": "string",
+          "description": "Nomor tampilan unit, contoh A.01"
+        },
+        "block": {
+          "type": "string",
+          "description": "Blok unit (A, B, C, D, dst)"
+        },
+        "x": {
+          "type": "number",
+          "description": "Koordinat horizontal persentase (0-100)"
+        },
+        "y": {
+          "type": "number",
+          "description": "Koordinat vertikal persentase (0-100)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["tersedia", "booking", "bangun", "realisasi"],
+          "description": "Status ketersediaan unit"
+        },
+        "type": {
+          "type": "string",
+          "description": "Tipe rumah (contoh 36/72)"
+        },
+        "luas": {
+          "type": "number",
+          "description": "Luas tanah dalam m2"
+        },
+        "harga": {
+          "type": "string",
+          "description": "Ringkasan harga (contoh Rp 185 Jt)"
+        },
+        "hargaFull": {
+          "type": "string",
+          "description": "Harga lengkap dalam format Rupiah"
+        },
+        "konsumen": {
+          "type": "string",
+          "description": "Nama pemesan atau pemilik unit"
+        },
+        "tglBooking": {
+          "type": "string",
+          "description": "Tanggal booking SPR"
+        },
+        "tglRealisasi": {
+          "type": "string",
+          "description": "Tanggal realisasi akad KPR"
+        },
+        "tglSerahTerima": {
+          "type": "string",
+          "description": "Tanggal serah terima kunci"
+        },
+        "progress": {
+          "type": "number",
+          "description": "Persentase kemajuan pembangunan (0-100)"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Waktu terakhir data diperbarui"
+        }
+      },
+      "required": ["id", "display", "block", "x", "y", "status"]
+    },
+    "SiteplanConfig": {
+      "title": "SiteplanConfig",
+      "description": "Konfigurasi umum siteplan termasuk latar belakang dan skala titik",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID konfigurasi (contoh main)"
+        },
+        "bgType": {
+          "type": "string",
+          "enum": ["image", "video"],
+          "description": "Jenis media latar belakang"
+        },
+        "bgFileName": {
+          "type": "string",
+          "description": "Nama file latar belakang"
+        },
+        "pointScale": {
+          "type": "number",
+          "description": "Faktor skala ukuran titik pin"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Waktu pembaruan konfigurasi"
+        }
+      },
+      "required": ["id", "bgType", "pointScale"]
+    }
+  },
+  "firestore": {
+    "/units/{unitId}": {
+      "schema": {
+        "$ref": "#/entities/Unit"
+      },
+      "description": "Koleksi data seluruh kavling/unit rumah yang tersinkronisasi secara real-time"
+    },
+    "/siteplan_config/{configId}": {
+      "schema": {
+        "$ref": "#/entities/SiteplanConfig"
+      },
+      "description": "Konfigurasi tampilan siteplan global"
+    }
+  }
+}

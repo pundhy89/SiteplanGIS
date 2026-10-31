@@ -1,0 +1,8 @@
+{
+  "name": "SitePlan GIS",
+  "description": "Real-time site plan mapping and Konsumen Data",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // Units collection: data kavling perumahan Griya Indah Secawan
+    match /units/{unitId} {
+      allow read: if true;
+      allow create, update: if isValidId(unitId)
+        && request.resource.data.id is string
+        && request.resource.data.display is string
+        && request.resource.data.block is string
+        && request.resource.data.x is number
+        && request.resource.data.y is number
+        && request.resource.data.status in ['tersedia', 'booking', 'bangun', 'realisasi'];
+      allow delete: if isValidId(unitId);
+    }
+
+    // Siteplan configuration (background, scale, etc.)
+    match /siteplan_config/{configId} {
+      allow read: if true;
+      allow write: if isValidId(configId);
+    }
+
+    // Connection testing doc
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // Default deny for any other documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
